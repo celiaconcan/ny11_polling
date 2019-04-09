@@ -1,0 +1,48 @@
+---
+title: "ny_polling"
+author: "Celia Concannon"
+date: "4/9/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(gt)
+library(readr)
+library(tidyverse)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ny11 <- read_csv("elections-poll-ny11-3.csv") %>%
+  select(region, gender, response) %>%
+  filter(!response == "3") %>%
+  group_by(region, gender) %>%
+  count(response) 
+# This selects for the 3 variables I want to look at.
+# I used count(response), because I ultimately want to compare the number of responses for Republican, Democrat, and undecided along different genders and regions. 
+  
+ny11 %>%
+ggplot(mapping = aes(x = gender, y = n, fill = response)) +
+    geom_col(position = "dodge2") +
+    facet_wrap(~region) +
+# Creates two separate graphs for Brooklyn and Staten Island.
+    theme(legend.position = "top") +
+# Moves legend to the top.
+    labs(
+      title = "Staten Island Males Dominate NY11",
+      source = "New York Times Upshot/Siena College 2018 live polls") +
+    xlab("") +
+    ylab("Number of Responses") +
+    theme(legend.title=element_blank()) +
+# Gets rid of legend title
+    scale_fill_manual(breaks = c("Dem", "Rep", "Und"),
+                      values=c("blue", "red", "green"))
+# ggplot is used to graph the data I have selected for.
+# y = n wihtin aes() uses the n from the count(response) above so that the number of responses for each category of response is on the  y axis.
+# I used geom_col(position = "dodge2"), because after reading Healy, I learned that this will create 3 seperate bars, and I want to compare the 3 responses.
+# I used scale_fill_manual to change the colors of each response so that Democrats are represented by their typical party color of blue, and republicans by theirs of red.
+
+# What I did here was create a grpah which shows how males and females responded to the poll, looking at Brooklyn and Staten Island separately.  NY Congressional District #11 spans south Brooklyn and a large part of Staten Island.  It is a noteworthy district because it is the only district within New York City boundaries which typically goes Republican in presidential elections.  After learning this, I wanted to find and display which groups within the district reflect this.  The findings our interesting, because only in the Male, Staten Island category does the number of Republican responses exceed the number of democrat responses.  
+```
