@@ -1,1 +1,1 @@
-# ny11_polling
+# Graph comparing male and female responses to a poll in the 11th Congressional District of New York
